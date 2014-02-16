@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+  <meta title="hexlines" package="com.example.hexlines" version="1.0.0" company="Company Name" />
+  <app main="MainView" path="bin" file="hexlines" />
+
+  <source path="src" />
+
+  <haxelib name="openfl" />
+
+  <assets path="assets" exclude="icon.svg" />
+  <icon path="assets/icon.svg" />
+
+  <window width="640" height="480" />
+
+</project>
