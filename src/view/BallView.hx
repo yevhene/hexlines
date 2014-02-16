@@ -27,13 +27,13 @@ class BallView extends Sprite {
 
     draw();
 
-    addEventListener(MouseEvent.CLICK, on_click);
+    addEventListener(MouseEvent.CLICK, onClick);
 
-    init_listeners();
+    initListeners();
   }
 
-  private function init_listeners() {
-    Game.instance().add_listener(GameEvent.BallSelected, function(b : Ball) {
+  private function initListeners() {
+    Game.instance().addListener(GameEvent.BallSelected, function(b : Ball) {
       if (b == ball && !active) {
         active = true;
         draw();
@@ -45,9 +45,9 @@ class BallView extends Sprite {
   }
 
   private function draw() {
-    graphics.lineStyle(3, color_to_int(ball.color));
+    graphics.lineStyle(3, colorToInt(ball.color));
     if (active) {
-      graphics.beginFill(color_to_int(ball.color));
+      graphics.beginFill(colorToInt(ball.color));
     } else {
       graphics.beginFill(0xffffff);
     }
@@ -55,16 +55,12 @@ class BallView extends Sprite {
     graphics.endFill();
   }
 
-  private function get_ball() : Ball {
-    return ball;
-  }
-
-  private function on_click(event) {
+  private function onClick(event) {
     Game.instance().trigger(GameEvent.BallActivation, ball);
     event.stopPropagation();
   }
 
-  private function color_to_int(color : Color) : Int {
+  private function colorToInt(color : Color) : Int {
     return switch(color) {
       case Red: 0xe50000;
       case Green: 0x15b01a;
@@ -74,6 +70,10 @@ class BallView extends Sprite {
       case Indigo: 0x380282;
       case Violet: 0x9a0eea;
     }
+  }
+
+  private function get_ball() : Ball {
+    return ball;
   }
 
 }

@@ -20,10 +20,10 @@ class Board {
     tiles = [];
     balls = [];
 
-    create_tiles();
+    createTiles();
   }
 
-  public function ball_at(tile : Tile) : Ball {
+  public function ballAt(tile : Tile) : Ball {
     for (ball in balls) {
       if (ball.tile == tile) {
         return ball;
@@ -32,7 +32,7 @@ class Board {
     return null;
   }
 
-  public function tile_at(x : Int, y : Int) : Tile {
+  public function tileAt(x : Int, y : Int) : Tile {
     for (tile in tiles) {
       if (tile.x == x && tile.y == y) {
         return tile;
@@ -41,35 +41,35 @@ class Board {
     return null;
   }
 
-  public function tile_at_cube(x : Int, y : Int, z : Int) : Tile {
+  public function tileAtCube(x : Int, y : Int, z : Int) : Tile {
     for (tile in tiles) {
-      if (tile.cube_x == x && tile.cube_y == y && tile.cube_z == z) {
+      if (tile.cubeX == x && tile.cubeY == y && tile.cubeZ == z) {
         return tile;
       }
     }
     return null;
   }
 
-  public function spawn_ball(color) : Ball {
-    var available_tiles = tiles_without_ball();
-    var tile = available_tiles[Std.random(available_tiles.length)];
+  public function spawnBall(color) : Ball {
+    var availableTiles = tilesWithoutBall();
+    var tile = availableTiles[Std.random(availableTiles.length)];
     var ball = new Ball(color);
     ball.tile = tile;
     balls.push(ball);
     return ball;
   }
 
-  public function remove_balls(balls : Array<Ball>) {
+  public function removeBalls(balls : Array<Ball>) {
     for (ball in balls) {
       this.balls.remove(ball);
     }
   }
 
-  public function move_ball(ball : Ball, tile : Tile) {
+  public function moveBall(ball : Ball, tile : Tile) {
     ball.tile = tile;
   }
 
-  private function create_tiles() {
+  private function createTiles() {
     for (y in 0...height) {
       for (x in 0...width) {
         tiles.push(new Tile(x, y));
@@ -77,14 +77,14 @@ class Board {
     }
   }
 
-  private function tiles_without_ball() : Array<Tile> {
-    var tiles_without_ball : Array<Tile> = [];
+  private function tilesWithoutBall() : Array<Tile> {
+    var tilesWithoutBall : Array<Tile> = [];
     for (tile in tiles) {
-      if (ball_at(tile) == null) {
-        tiles_without_ball.push(tile);
+      if (ballAt(tile) == null) {
+        tilesWithoutBall.push(tile);
       }
     }
-    return tiles_without_ball;
+    return tilesWithoutBall;
   }
 
   private function get_width() : Int {

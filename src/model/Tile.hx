@@ -7,13 +7,13 @@ class Tile {
   public var y (get, null) : Int;
 
   @:isVar
-  public var cube_x (get, null) : Int;
+  public var cubeX (get, null) : Int;
 
   @:isVar
-  public var cube_y (get, null) : Int;
+  public var cubeY (get, null) : Int;
 
   @:isVar
-  public var cube_z (get, null) : Int;
+  public var cubeZ (get, null) : Int;
 
   public function new(x : Int, y : Int) {
     this.x = x;
@@ -28,15 +28,15 @@ class Tile {
     return y;
   }
 
-  private function get_cube_x() : Int {
+  private function get_cubeX() : Int {
     return x;
   }
 
-  private function get_cube_y() : Int {
-    return (-cube_x) - (cube_z);
+  private function get_cubeY() : Int {
+    return (-cubeX) - (cubeZ);
   }
 
-  private function get_cube_z() : Int {
+  private function get_cubeZ() : Int {
     return y - Math.floor((x - (x & 1)) / 2);
   }
 

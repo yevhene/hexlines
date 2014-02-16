@@ -31,12 +31,12 @@ class LinesFinder {
   private function check(ball : Ball) : Bool {
     var result = false;
     for (direction in Directions.list()) {
-      result = result || check_direction(ball, direction);
+      result = result || checkDirection(ball, direction);
     }
     return result;
   }
 
-  private function check_direction(ball : Ball, direction : Direction) : Bool {
+  private function checkDirection(ball : Ball, direction : Direction) : Bool {
     var balls : Array<Ball> = [ball];
     var it = new BallIterator(board, ball, direction);
     var b = it.next();

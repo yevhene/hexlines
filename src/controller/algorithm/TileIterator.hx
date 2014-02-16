@@ -9,45 +9,45 @@ import controller.algorithm.Direction;
 class TileIterator {
 
   private var board : Board;
-  private var start_tile : Tile;
-  private var current_tile : Tile;
-  private var next_mod: Array<Int>;
-  private var prev_mod: Array<Int>;
+  private var startTile : Tile;
+  private var currentTile : Tile;
+  private var nextMod: Array<Int>;
+  private var prevMod: Array<Int>;
 
   public function new(board : Board, tile : Tile, direction : Direction) {
     this.board = board;
-    this.start_tile = tile;
+    this.startTile = tile;
 
     switch (direction) {
-      case Vertical: set_mods([0, -1, 1], [0, 1, -1]);
-      case Ascending: set_mods([-1, 0,  1], [1, 0, -1]);
-      case Descending: set_mods([-1, 1, 0], [1, -1, 0]);
+      case Vertical: setMods([0, -1, 1], [0, 1, -1]);
+      case Ascending: setMods([-1, 0,  1], [1, 0, -1]);
+      case Descending: setMods([-1, 1, 0], [1, -1, 0]);
     }
 
     reset();
   }
 
   public function reset() {
-    current_tile = start_tile;
+    currentTile = startTile;
   }
 
   public function next() : Tile {
-    return current_tile = mod_tile(next_mod);
+    return currentTile = modTile(nextMod);
   }
 
   public function prev() : Tile {
-    return current_tile = mod_tile(prev_mod);
+    return currentTile = modTile(prevMod);
   }
 
-  private function mod_tile(mod) {
-    return board.tile_at_cube(current_tile.cube_x + mod[0],
-                              current_tile.cube_y + mod[1],
-                              current_tile.cube_z + mod[2]);
+  private function modTile(mod) {
+    return board.tileAtCube(currentTile.cubeX + mod[0],
+                            currentTile.cubeY + mod[1],
+                            currentTile.cubeZ + mod[2]);
   }
 
-  private function set_mods(prev_mod : Array<Int>, next_mod : Array<Int>) {
-    this.prev_mod = prev_mod;
-    this.next_mod = next_mod;
+  private function setMods(prevMod : Array<Int>, nextMod : Array<Int>) {
+    this.prevMod = prevMod;
+    this.nextMod = nextMod;
   }
 
 }

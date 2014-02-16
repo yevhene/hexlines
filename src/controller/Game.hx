@@ -25,7 +25,7 @@ class Game {
 
   private static var game : Game;
 
-  private var active_ball : Ball;
+  private var activeBall : Ball;
 
   public var board  (get, null): Board;
 
@@ -41,33 +41,33 @@ class Game {
 
     board = new Board(16, 10);
 
-    init_listeners();
+    initListeners();
   }
 
   public function start() {
-    spawn_balls(3);
+    spawnBalls(3);
   }
 
-  private function init_listeners() {
-    add_listener(GameEvent.BallActivation, function(ball : Ball) {
-      if (active_ball == ball) {
-        active_ball = null;
+  private function initListeners() {
+    addListener(GameEvent.BallActivation, function(ball : Ball) {
+      if (activeBall == ball) {
+        activeBall = null;
       } else {
-        active_ball = ball;
+        activeBall = ball;
       }
-      trigger(GameEvent.BallSelected, active_ball);
+      trigger(GameEvent.BallSelected, activeBall);
     });
 
-    add_listener(GameEvent.TileActivation, function(tile : Tile) {
-      var ball = board.ball_at(tile);
+    addListener(GameEvent.TileActivation, function(tile : Tile) {
+      var ball = board.ballAt(tile);
       if (ball != null) {
         trigger(GameEvent.BallActivation, ball);
       } else {
-        if (active_ball != null) {
-          if (move_active_ball(tile)) {
-            if (!destroy_balls()) {
-              spawn_balls(3);
-              destroy_balls();
+        if (activeBall != null) {
+          if (moveActiveBall(tile)) {
+            if (!destroyBalls()) {
+              spawnBalls(3);
+              destroyBalls();
             }
           }
         }
@@ -75,30 +75,30 @@ class Game {
     });
   }
 
-  private function move_active_ball(tile_to) {
-    var path = new PathFinder(board, active_ball.tile, tile_to).run();
+  private function moveActiveBall(tileTo) {
+    var path = new PathFinder(board, activeBall.tile, tileTo).run();
     if (path != null) {
-      board.move_ball(active_ball, tile_to); // Model updates before notification.
-      var move_data : Map<String, Dynamic> = ['ball' => active_ball, 'path' => path];
-      trigger(GameEvent.BallMove, move_data);
-      active_ball = null;
+      board.moveBall(activeBall, tileTo); // Model updates before notification.
+      var moveData : Map<String, Dynamic> = ['ball' => activeBall, 'path' => path];
+      trigger(GameEvent.BallMove, moveData);
+      activeBall = null;
       trigger(GameEvent.BallSelected, null);
     }
     return path != null;
   }
 
-  private function destroy_balls() {
+  private function destroyBalls() {
     var balls = new LinesFinder(board).run();
-    board.remove_balls(balls); // Model updates before notification.
+    board.removeBalls(balls); // Model updates before notification.
     for (ball in balls) {
       trigger(GameEvent.BallDestroy, ball);
     }
     return balls.length > 0;
   }
 
-  private function spawn_balls(count : Int) {
+  private function spawnBalls(count : Int) {
     for (i in 0...count) {
-      var ball = board.spawn_ball(Colors.random(3));
+      var ball = board.spawnBall(Colors.random(3));
       trigger(GameEvent.BallCreate, ball);
     }
   }
@@ -107,19 +107,19 @@ class Game {
     return board;
   }
 
-  public function add_listener(name : GameEvent, handler : Dynamic -> Void) {
-    var concrete_handlers = handlers[name];
-    if (concrete_handlers == null) {
-      concrete_handlers = [];
-      handlers[name] = concrete_handlers;
+  public function addListener(name : GameEvent, handler : Dynamic -> Void) {
+    var concreteHandlers = handlers[name];
+    if (concreteHandlers == null) {
+      concreteHandlers = [];
+      handlers[name] = concreteHandlers;
     }
-    concrete_handlers.push(handler);
+    concreteHandlers.push(handler);
   }
 
   public function trigger(name : GameEvent, data : Dynamic) {
-    var concrete_handlers = handlers[name];
-    if (concrete_handlers != null) {
-      for (handler in concrete_handlers) {
+    var concreteHandlers = handlers[name];
+    if (concreteHandlers != null) {
+      for (handler in concreteHandlers) {
         handler(data);
       }
     }
