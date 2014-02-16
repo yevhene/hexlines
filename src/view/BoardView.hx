@@ -39,7 +39,7 @@ class BoardView extends Sprite {
   }
 
   private function init_listeners() {
-    Game.instance().add_listener('ball_create', function(ball : Ball) {
+    Game.instance().add_listener(GameEvent.BallCreate, function(ball : Ball) {
       var ball_view = new BallView(ball, tile_w, tile_h);
       var position = get_tile_position(ball.tile);
       ball_view.x = position['x'];
@@ -48,11 +48,11 @@ class BoardView extends Sprite {
       addChild(ball_view);
     });
 
-    Game.instance().add_listener('ball_move', function(data : Map<String, Dynamic>) {
+    Game.instance().add_listener(GameEvent.BallMove, function(data : Map<String, Dynamic>) {
       move_ball(data['ball'], convert_path(data['path']));
     });
 
-    Game.instance().add_listener('ball_destroy', function(ball : Ball) {
+    Game.instance().add_listener(GameEvent.BallDestroy, function(ball : Ball) {
       var ball_view = ball_view_for(ball);
       ball_views.remove(ball_view);
       removeChild(ball_view);
@@ -124,7 +124,9 @@ class BoardView extends Sprite {
 
   private function on_click(event) {
     var tile = tile_at(event.localX, event.localY);
-    Game.instance().trigger('tile_activation', tile);
+    if (tile != null) {
+      Game.instance().trigger(GameEvent.TileActivation, tile);
+    }
   }
 
 }

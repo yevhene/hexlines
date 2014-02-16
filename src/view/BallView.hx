@@ -33,7 +33,7 @@ class BallView extends Sprite {
   }
 
   private function init_listeners() {
-    Game.instance().add_listener('ball_selected', function(b : Ball) {
+    Game.instance().add_listener(GameEvent.BallSelected, function(b : Ball) {
       if (b == ball && !active) {
         active = true;
         draw();
@@ -60,7 +60,7 @@ class BallView extends Sprite {
   }
 
   private function on_click(event) {
-    Game.instance().trigger('ball_activation', ball);
+    Game.instance().trigger(GameEvent.BallActivation, ball);
     event.stopPropagation();
   }
 

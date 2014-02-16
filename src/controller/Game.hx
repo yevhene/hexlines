@@ -5,15 +5,23 @@ import model.Ball;
 import model.Tile;
 import model.Color;
 
-import controller.EventDispatcher;
-
 import controller.algorithm.PathFinder;
 import controller.algorithm.LinesFinder;
 
 
+enum GameEvent {
+  BallDestroy;
+  BallActivation;
+  TileActivation;
+  BallSelected;
+  BallMove;
+  BallCreate;
+}
+
+
 class Game {
 
-  private var event_dispatcher : EventDispatcher;
+  private var handlers : Map<GameEvent, Array<Dynamic -> Void>>;
 
   private static var game : Game;
 
@@ -29,7 +37,7 @@ class Game {
   }
 
   private function new() {
-    event_dispatcher = new EventDispatcher();
+    handlers = new Map();
 
     board = new Board(16, 10);
 
@@ -41,19 +49,19 @@ class Game {
   }
 
   private function init_listeners() {
-    add_listener('ball_activation', function(ball : Ball) {
+    add_listener(GameEvent.BallActivation, function(ball : Ball) {
       if (active_ball == ball) {
         active_ball = null;
       } else {
         active_ball = ball;
       }
-      trigger('ball_selected', active_ball);
+      trigger(GameEvent.BallSelected, active_ball);
     });
 
-    add_listener('tile_activation', function(tile : Tile) {
+    add_listener(GameEvent.TileActivation, function(tile : Tile) {
       var ball = board.ball_at(tile);
       if (ball != null) {
-        trigger('ball_activation', ball);
+        trigger(GameEvent.BallActivation, ball);
       } else {
         if (active_ball != null) {
           if (move_active_ball(tile)) {
@@ -72,9 +80,9 @@ class Game {
     if (path != null) {
       board.move_ball(active_ball, tile_to); // Model updates before notification.
       var move_data : Map<String, Dynamic> = ['ball' => active_ball, 'path' => path];
-      trigger('ball_move', move_data);
+      trigger(GameEvent.BallMove, move_data);
       active_ball = null;
-      trigger('ball_selected', null);
+      trigger(GameEvent.BallSelected, null);
     }
     return path != null;
   }
@@ -83,7 +91,7 @@ class Game {
     var balls = new LinesFinder(board).run();
     board.remove_balls(balls); // Model updates before notification.
     for (ball in balls) {
-      trigger('ball_destroy', ball);
+      trigger(GameEvent.BallDestroy, ball);
     }
     return balls.length > 0;
   }
@@ -91,20 +99,30 @@ class Game {
   private function spawn_balls(count : Int) {
     for (i in 0...count) {
       var ball = board.spawn_ball(Colors.random(3));
-      trigger('ball_create', ball);
+      trigger(GameEvent.BallCreate, ball);
     }
-  }
-
-  public function add_listener(name : String, handler : Dynamic -> Void) {
-    event_dispatcher.add_listener(name, handler);
-  }
-
-  public function trigger(name : String, data : Dynamic) {
-    event_dispatcher.trigger(name, data);
   }
 
   private function get_board() : Board {
     return board;
+  }
+
+  public function add_listener(name : GameEvent, handler : Dynamic -> Void) {
+    var concrete_handlers = handlers[name];
+    if (concrete_handlers == null) {
+      concrete_handlers = [];
+      handlers[name] = concrete_handlers;
+    }
+    concrete_handlers.push(handler);
+  }
+
+  public function trigger(name : GameEvent, data : Dynamic) {
+    var concrete_handlers = handlers[name];
+    if (concrete_handlers != null) {
+      for (handler in concrete_handlers) {
+        handler(data);
+      }
+    }
   }
 
 }
